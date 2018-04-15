@@ -1,0 +1,102 @@
+<jxb:bindings
+  version="1.0"
+  xmlns:jxb="http://java.sun.com/xml/ns/jaxb">
+  
+  	<!-- =========== common types on v1.0 =========== -->
+           
+    <jxb:bindings
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      schemaLocation="../../schemas/components/identityFieldsBaseTypes-1.0.xsd" 
+      node="/xs:schema">
+        <jxb:schemaBindings>
+          <jxb:package name="com.earthport.bind.v1.common.identityFieldsBase"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>
+
+    <jxb:bindings
+            xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            schemaLocation="../../schemas/components/walletBaseTypes-1.0.xsd"
+            node="/xs:schema">
+        <jxb:schemaBindings>
+            <jxb:package name="com.earthport.bind.v1.common.walletBaseTypes"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>
+
+    <!-- =========== common types on v1.1 =========== -->
+    
+    <jxb:bindings
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      schemaLocation="../../schemas/components/purposeOfPaymentBaseTypes-1.1.xsd" 
+      node="/xs:schema">
+        <jxb:schemaBindings>
+          <jxb:package name="com.earthport.bind.v1.common.purposeOfPaymentBase"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>
+
+    <!-- =========== common types on v1.2 =========== -->
+
+
+    <!-- =========== common types on v1.3 =========== -->
+    <jxb:bindings
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      schemaLocation="../../schemas/components/notificationBaseTypes-1.3.xsd"
+      node="/xs:schema">
+        <jxb:schemaBindings>
+          <jxb:package name="com.earthport.bind.v1.common.notificationbase"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>
+
+    <jxb:bindings
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      schemaLocation="../../schemas/components/payoutBaseTypes-1.3.xsd" 
+      node="/xs:schema">
+        <jxb:schemaBindings>
+          <jxb:package name="com.earthport.bind.v1.common.payoutbase"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>   
+    
+	<!-- =========== common types on v2.0 =========== -->
+	        
+	<jxb:bindings
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      schemaLocation="../../schemas/components/coreTypes-2.0.xsd"
+      node="/xs:schema">
+        <jxb:schemaBindings>
+          <jxb:package name="com.earthport.bind.v2.common.core"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>     
+    
+	<!-- =========== common types on v2.1 =========== -->
+	
+	<jxb:bindings
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      schemaLocation="../../schemas/components/identityBaseTypes-2.1.xsd" 
+      node="/xs:schema">
+        <jxb:schemaBindings>
+          <jxb:package name="com.earthport.bind.v2.common.identitybase"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>
+
+	<!-- =========== common types on v3.1 =========== -->
+    	    	
+    <jxb:bindings
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      schemaLocation="../../schemas/components/bankBaseTypes-3.1.xsd" 
+      node="/xs:schema">
+        <jxb:schemaBindings>
+          <jxb:package name="com.earthport.bind.v3.common.bankbase"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>  
+    
+	<!-- =========== common types on v4.4 =========== -->
+	      
+	<jxb:bindings
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      schemaLocation="../../schemas/components/financialTransactionBaseTypes-4.4.xsd"
+      node="/xs:schema">
+        <jxb:schemaBindings>
+          <jxb:package name="com.earthport.bind.v4.common.financialtransaction"/>
+        </jxb:schemaBindings>
+    </jxb:bindings>      
+    
+</jxb:bindings>

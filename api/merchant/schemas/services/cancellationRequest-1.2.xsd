@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Document: cancellationRequest-1.2.xsd Version: 1.2 Copyright 2015 Earthport
+	Plc. All rights reserved. -->
+<xsd:schema
+	targetNamespace="http://customer.endpoint.earthport.com/api/merchant/v1/services/cancellationRequest"
+	elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:epcore="http://customer.endpoint.earthport.com/api/merchant/v2/components/core"
+	xmlns:epbb="http://customer.endpoint.earthport.com/api/merchant/v3/components/bankBase"
+	xmlns="http://customer.endpoint.earthport.com/api/merchant/v1/services/cancellationRequest">
+
+	<xsd:import
+		namespace="http://customer.endpoint.earthport.com/api/merchant/v2/components/core"
+		schemaLocation="../components/coreTypes-2.0.xsd" />
+
+	<xsd:import
+		namespace="http://customer.endpoint.earthport.com/api/merchant/v3/components/bankBase"
+		schemaLocation="../components/bankBaseTypes-3.1.xsd" />
+
+	<xsd:annotation>
+		<xsd:documentation>
+			Definition of request and response XML document
+			messages for request the
+			Cancellation of a payout instruction which is
+			in a cancellable state
+			in Earthport’s Payments Service
+        </xsd:documentation>
+	</xsd:annotation>
+
+	<xsd:element name="cancellationRequest" type="CancellationRequestType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Root element for the cancellationRequest function
+				request XML.
+            </xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+
+	<xsd:element name="cancellationRequestResponse" type="CancellationRequestResponseType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Root element for the payoutRequest function
+				response XML.
+            </xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+
+	<xsd:complexType name="CancellationRequestType">
+		<xsd:annotation>
+			<xsd:documentation>
+				EarthportTransactionID and/or
+				MerchantTransactionID
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="merchantTransactionReference" type="epcore:MerchantTransactionRefType"
+				minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						The unique reference provided by the merchant,
+						this will uniquely identify the transaction to
+						the merchant.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="epTransactionID" type="epcore:PaymentIDType"
+				minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						Earthport Transaction ID
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="version" type="xsd:decimal" use="optional" />
+	</xsd:complexType>
+
+	<xsd:complexType name="CancellationRequestResponseType">
+		<xsd:sequence>
+			<xsd:element name="epUserID" type="epcore:EPUserIDType"
+				minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						The EP User ID is the equivalent of the Virtual
+						Account Number (VAN) that can be used as a
+						unique identifier for a
+						merchant.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="merchantUserIdentity" type="epcore:MerchantUserIdentityType"
+				minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						The account name associated with the users VAN
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="timestamp" type="epcore:GenericTimestampType"
+				minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						The transaction time stamp in the format:
+						YYYYMMDDHHMMSS
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="managedMerchantIdentity" type="epcore:MerchantIdentityType"
+				minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						Refers to the descriptive name used to identify
+						a given merchant. It is unique across Earthport
+						merchants.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+            <xsd:element name="cancellationTransactionID" type="epcore:PaymentIDType"
+                         minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The new generated payment ID for the
+                        cancellation of a payout.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+			<xsd:element name="refundedAmount" type="epcore:MonetaryValueType"
+				minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						The amount of the refund.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="payoutAmount" type="epcore:MonetaryValueType"
+				minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						The original instruction amount
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="payoutTransactionID" type="PayoutTransactionIDType"
+				minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						One or more EPS and/or Merchant transaction IDs
+						uniquely identifying transactions in the EPS
+						system.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="epBankID" type="epbb:EPBankIDType"
+				minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						The unique ID of a beneficiary bank account.
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="reason" type="xsd:string" minOccurs="1"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						Reason for rejection
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="reasonID" type="xsd:int" maxOccurs="1"
+				minOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						Unique Reason ID for cancellation
+                    </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="PayoutTransactionIDType">
+		<xsd:annotation>
+			<xsd:documentation>
+				An EPS and/or Merchant transaction ID that
+				uniquely identifies
+				a transaction in the EPS system
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="epTransactionID" type="epcore:PaymentIDType"
+				minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						An EPS transaction ID uniquely identifying
+						a transaction in the EPS system.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="merchantTransactionReference" type="epcore:MerchantTransactionRefType"
+				minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						A transaction ID (as assigned
+						by the merchant)
+						that (together with a
+						Customer ID) can be used to uniquely
+						identify
+						a transaction in the EPS
+						system.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

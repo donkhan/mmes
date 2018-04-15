@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Document: walletBaseTypes-1.0.xsd
+	Version:  1.0
+	Copyright 2014 Earthport Plc. All rights reserved.
+-->
+<xsd:schema
+        xmlns="http://customer.endpoint.earthport.com/api/merchant/v1/components/walletBase"
+        targetNamespace="http://customer.endpoint.earthport.com/api/merchant/v1/components/walletBase"
+        xmlns:epcore="http://customer.endpoint.earthport.com/api/merchant/v2/components/core"
+        xmlns:epident="http://customer.endpoint.earthport.com/api/merchant/v2/components/identityBase"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <xsd:import namespace="http://customer.endpoint.earthport.com/api/merchant/v2/components/core"
+                schemaLocation="coreTypes-2.0.xsd" />
+
+    <xsd:import namespace="http://customer.endpoint.earthport.com/api/merchant/v2/components/identityBase"
+                schemaLocation="identityBaseTypes-2.1.xsd" />
+
+    <xsd:annotation>
+        <xsd:documentation>
+            Wallet context base type definitions as used by the Earthport
+            Merchant API
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType name="walletIDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This group consists of all possible wallet
+                identifier types.
+
+                The 'epWalletID' field is a unique, automatically assigned
+                identifier within the Earthport system for the beneficiary wallet.
+
+                The 'merchantWalletID' is an optional merchant specified
+                identifier for the beneficiary wallet. It must be unique within that merchant's system.
+
+                The 'epWalletID', 'merchantWalletID' or both 'epWalletID' and
+                'merchantWalletID' can be supplied. A mapping will be
+                performed to retrieve the merchant wallet ID from the
+                supplied EP wallet ID and vice versa.
+
+                If both the 'epWalletID' and 'merchantWalletID' are
+                supplied, a check will be performed to ensure that the
+                two are mapped. If the two provided fields are not
+                mapped, then a validation error code will be returned.
+
+                At least one of the fields must be populated.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="epWalletID" type="epWalletIDType"
+                         minOccurs="0" maxOccurs="1" />
+            <xsd:element name="merchantWalletID" type="merchantWalletIDType"
+                         minOccurs="0" maxOccurs="1" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="merchantWalletIDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                The merchant specified ID for a beneficiary wallet.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1" />
+            <xsd:maxLength value="100" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="epWalletIDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                The unique Earthport ID assigned to a beneficiary wallet.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:long">
+            <xsd:minInclusive value="0" />
+            <xsd:maxInclusive value="9999999999999" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="walletType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This type provides all the possible information required
+                to identify a wallet.
+
+                The identity of the beneficiary of this wallet is
+                mandatory and must be supplied in the
+                'beneficiaryIdentity' field.
+
+                A description of this wallet is optional and may
+                be supplied in the 'description' field.
+
+                The territory in which this wallet is domiciled is
+                mandatory and must be supplied in the 'countryCode'
+                field as a 2 character country code.
+
+                The currency held in this wallet is mandatory and must
+                be supplied in the 'currencyCode' field as a 3 character
+                currency code.
+
+                The mandatory 'walletDetails' is a group of
+                sub-elements which collectively identify the wallet.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="beneficiaryIdentity"
+                         type="epident:BeneficiaryIdentityType" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="description"
+                         type="walletDescType" minOccurs="0" maxOccurs="1" />
+            <xsd:element name="countryCode" type="epcore:CountryCodeType"
+                         minOccurs="1" maxOccurs="1" />
+            <xsd:element name="currencyCode" type="epcore:CurrencyCodeType"
+                         minOccurs="1" maxOccurs="1" />
+            <xsd:element name="walletDetails"
+                         type="walletDetailsType" minOccurs="1" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="walletDescType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Type which defines a beneficiary wallet
+                description. Each wallet may be given a
+                description therefore this is an optional component of
+                the walletType complex type.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1" />
+            <xsd:maxLength value="254" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="walletDetailsType">
+        <xsd:annotation>
+            <xsd:documentation>
+                <p>
+                    This group holds all possible account identifier
+                    types - listed below in alphabetical order. The data which should be supplied in this group
+                    differs depending on the wallet type. Please
+                    refer to the integration guide for type-specific
+                    details of what should be supplied.
+                </p>
+                <p>
+                    The following set of parameter names are valid 'keys':
+                    <ul>
+                        <li>MSISDN</li>
+
+                    </ul>
+
+                </p>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="key" type="walletDetailsKeyType" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="value" type="walletDetailsValueType" minOccurs="1" maxOccurs="1" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="walletDetailsKeyType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Type which defines the allowable data which may be
+                passed to the "key" element of the walletDetailsType
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1" />
+            <xsd:maxLength value="50" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="walletDetailsValueType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Type which defines the allowable data which may be
+                passed to the "value" element of the walletDetailsType
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="UsersWalletIDType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This group consists of a collection of both the user ID
+                group and wallet ID group.
+
+                The 'userID' is a collection of user identifier types.
+
+                The 'walletID' is a collection of wallet identifier
+                types.
+
+                Both the 'userID' and 'walletID' fields are mandatory.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="userID" type="epcore:UserIDType" minOccurs="1"
+                         maxOccurs="1" />
+            <xsd:element name="walletID" type="walletIDType"
+                         minOccurs="1" maxOccurs="1" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="userWalletType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This group consists of a collection of both the
+                wallet ID token and associated beneficiary
+                wallet group.
+
+                This is used as a return type for the
+                listActiveWallet service.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="walletID" type="walletIDType"
+                         minOccurs="1" maxOccurs="1" />
+            <xsd:element name="wallet"
+                         type="walletType" minOccurs="1" maxOccurs="1" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="walletSummaryType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This group consists of a collection of both the
+                wallet ID token and a small set of values summarising the associated
+                wallet.
+
+                This is used as a return type for the
+                listWalletSummary service.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="walletID" type="walletIDType"
+                         minOccurs="1" maxOccurs="1" />
+            <xsd:element name="description"
+                         type="walletDescType" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="countryCode" type="epcore:CountryCodeType"
+                         minOccurs="1" maxOccurs="1" />
+            <xsd:element name="walletDetails"
+                         type="walletDetailsType" minOccurs="1" maxOccurs="unbounded" />
+            <xsd:element name="status"
+                         type="walletStatusType" minOccurs="1" maxOccurs="1" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="walletGroupsListType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This type defines a list of wallet data groups.
+                Each group is normally represented as a row on the UI.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="walletFieldGroup" type="walletGroupType" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="walletGroupType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This type defines a wallet data group.
+                Each group is normally represented as a row on the UI.
+                'groupLabel' is the UI test to display as a name for this row.
+                'mandatory' indicates whether values must be supplied in the
+                fields of this group.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence minOccurs="1" maxOccurs="1">
+            <xsd:element name="walletFieldsList" type="walletFieldsListType" />
+        </xsd:sequence>
+        <xsd:attribute name="groupLabel" type="xsd:string" use="required" />
+        <xsd:attribute name="mandatory" type="xsd:string"  use="required" />
+    </xsd:complexType>
+
+    <xsd:complexType name="walletFieldsListType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This type defines a wallet field.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="walletField" type="walletFieldType" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="walletFieldType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Each walletField would normally be displayed
+                in the UI from left to right based on the tabOrder attribute.
+                <br/>
+                The walletField element contains
+                the following attributes:
+
+                <ul>
+                    <li>tabOrder: indicates the ordering of this field in the UI</li>
+                    <li>parameterName: the name of the corresponding Earthport parameter to use when calling prepareWalletPayment or sendWalletPayment</li>
+                    <li>displaySize: a suggested field size to display</li>
+                    <li>maxSize: suggested client side syntactic validation rule</li>
+                    <li>description: suggested roll-over or help text description to assist users</li>
+                    <li>separator: the separator to display following (to the right hand side) this field, usually '-' or '/'</li>
+                    <li>inputType: whether this field should be represented as a text field or a list of options</li>
+                    <li>subTitle: if present contains a sub-label to be displayed with the field</li>
+                    <li>locale: the localisation setting of this particular record</li>
+                    <li>value: the current value of this field, populated by the getWallet service</li>
+                </ul>
+            </xsd:documentation>
+        </xsd:annotation>
+
+        <xsd:sequence>
+            <xsd:element name="listItems" type="walletListItemsType" minOccurs="0" maxOccurs="1" />
+        </xsd:sequence>
+        <xsd:attribute name="tabOrder" type="xsd:int" use="required" />
+        <xsd:attribute name="parameterName" type="xsd:string" use="required" />
+        <xsd:attribute name="separator" type="xsd:string" use="required" />
+        <xsd:attribute name="displaySize" type="xsd:int" use="required" />
+        <xsd:attribute name="maxSize" type="xsd:int" use="required" />
+        <xsd:attribute name="description" type="xsd:string" use="required" />
+        <xsd:attribute name="subTitle" type="xsd:string" use="required" />
+        <xsd:attribute name="inputType" type="walletFieldInputType" use="required" />
+        <xsd:attribute name="locale" type="xsd:string" use="required" />
+        <xsd:attribute name="value" type="xsd:string" />
+
+    </xsd:complexType>
+
+    <xsd:complexType name="walletListItemsType">
+        <xsd:annotation>
+            <xsd:documentation>
+                The walletField contains optional listItem sub-elements.
+                The listItem sub-elements would normally be present where the inputType
+                attribute is <i>'list'</i>.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="walletField" type="walletListItemType" minOccurs="1" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="walletListItemType">
+        <xsd:attribute name="label" type="xsd:string" use="required" />
+        <xsd:attribute name="value" type="xsd:string" use="required" />
+    </xsd:complexType>
+
+    <xsd:simpleType name="walletFieldInputType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Supported input types for a wallet registration UI.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="text" />
+            <xsd:enumeration value="list" />
+            <xsd:enumeration value="integer" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="walletStatusType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Type which defines a wallet status within the Earthport
+                system. (ie. active or deleted).
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="PENDING" />
+            <xsd:enumeration value="ACTIVE"/>
+            <xsd:enumeration value="UNAVAILABLE" />
+            <xsd:enumeration value="INACTIVE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Document: identityFieldsBase-1.0.xsd Version: 1.0 Copyright 2013 Earthport 
+	Plc. All rights reserved. -->
+<xsd:schema
+        xmlns="http://customer.endpoint.earthport.com/api/merchant/v1/components/identityFieldsBase"
+        targetNamespace="http://customer.endpoint.earthport.com/api/merchant/v1/components/identityFieldsBase"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+    <xsd:complexType name="BeneficiaryIdentityGroupsListType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This type defines a list of identity data groups.
+                Each group is normally
+                represented as a section of fields on the UI.
+            </xsd:documentation>
+        </xsd:annotation>
+
+         <xsd:sequence>
+            <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="beneficiaryIdentityFieldGroup" type="BeneficiaryIdentityGroupType"/>
+                <xsd:element name="beneficiaryIdentityFieldGroupChoice"
+                             type="BeneficiaryIdentityFieldGroupChoiceType"/>
+            </xsd:choice>
+        </xsd:sequence>
+
+        <xsd:attribute name="groupLabel" type="xsd:string" use="required" />
+
+    </xsd:complexType>
+
+    <xsd:complexType name="BeneficiaryIdentityFieldType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Each BeneficiaryIdentityField would normally be displayed
+                in the UI from left to right based on the tabOrder attribute.
+                <br/>
+                The BeneficiaryIdentityField element contains
+                the following attributes:
+                <ul>
+                    <li>tabOrder: indicates the ordering of this field in the UI</li>
+                    <li>parameterName: the name of the corresponding Earthport parameter to use when calling addBeneficiaryBankAcount</li>
+                    <li>displaySize: a suggested field size to display</li>
+                    <li>maxSize: suggested client side syntactic validation rule</li>
+                    <li>description: suggested roll-over or help text description to assist users</li>
+                    <li>separator: the separator to display following (to the right hand side) this field, usually '-' or '/'</li>
+                    <li>inputType: whether this field should be represented as a text field or a list of options</li>
+                    <li>subTitle: if present contains a sub-label to be displayed with the field</li>
+                    <li>locale: the localisation setting of this particular record</li>
+                    <li>elementName: the name of the element in the addBeneficiaryBankAccount
+                        request document for the corresponding field</li>
+                    <li>mandatory: indicates whether the field is mandatory</li>
+                    <li>valueRegexp: the regexp for the value of this field</li>
+                </ul>
+            </xsd:documentation>
+        </xsd:annotation>
+        
+        <xsd:sequence>
+    		<xsd:element name="listItems" type="BeneficiaryIdentityListItemsType" minOccurs="0" maxOccurs="1" />    	
+		</xsd:sequence>
+        
+        <xsd:attribute name="subTitle" type="xsd:string" use="required" />
+        <xsd:attribute name="elementName" type="xsd:string" use="required" />
+        <xsd:attribute name="parameterName" type="xsd:string"
+                       use="optional" />
+        <xsd:attribute name="mandatory" type="xsd:string" use="required" />
+        <xsd:attribute name="tabOrder" type="xsd:int" use="required" />
+        <xsd:attribute name="separator" type="xsd:string" use="optional" />
+        <xsd:attribute name="displaySize" type="xsd:int" use="required" />
+        <xsd:attribute name="maxSize" type="xsd:int" use="required" />
+        <xsd:attribute name="description" type="xsd:string" use="required" />
+        <xsd:attribute name="inputType" type="BeneficiaryIdentityFieldInputType"
+                       use="required" />
+        <xsd:attribute name="locale" type="xsd:string" use="required" />
+        <xsd:attribute name="valueRegexp" type="xsd:string" use="optional" />
+
+    </xsd:complexType>
+    
+    <xsd:complexType name="BeneficiaryIdentityListItemsType">
+        <xsd:annotation>
+            <xsd:documentation>
+  				The beneficiaryIdentityField contains optional listItem sub-elements.
+				The listItem sub-elements would normally be present where the inputType 
+				attribute is <i>'list'</i>. 
+            </xsd:documentation>
+        </xsd:annotation>  	
+   		<xsd:sequence>
+    		<xsd:element name="beneficiaryIdentityField" type="BeneficiaryIdentityListItemType" minOccurs="1" maxOccurs="unbounded" />
+   		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="BeneficiaryIdentityListItemType">
+		<xsd:attribute name="label" type="xsd:string" use="required" />
+		<xsd:attribute name="value" type="xsd:string" use="required" />
+	</xsd:complexType>
+
+    <xsd:simpleType name="BeneficiaryIdentityFieldInputType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Supported input types for a beneficiary identity UI.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="text" />
+            <xsd:enumeration value="date" />
+            <xsd:enumeration value="number" />
+            <xsd:enumeration value="list" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="BeneficiaryIdentityGroupType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This type defines a beneficiary identity data group.
+                Each group is normally represented as a section of fields on the UI.
+                'groupLabel' is the UI test to display as a name for this section.
+                'mandatory' indicates whether all section is mandatory.
+                'elementName' is the name of the element in the addBeneficiaryBankAccount
+                request document for the corresponding section.
+            </xsd:documentation>
+        </xsd:annotation>
+
+        <xsd:sequence minOccurs="1" maxOccurs="1">
+            <xsd:element name="beneficiaryIdentityFieldsList" type="BeneficiaryIdentityFieldsListType" />
+
+        </xsd:sequence>
+
+        <xsd:attribute name="groupLabel" type="xsd:string" use="required" />
+        <xsd:attribute name="mandatory" type="xsd:string" use="required" />
+        <xsd:attribute name="elementName" type="xsd:string" use="required" />
+    </xsd:complexType>
+
+    <xsd:complexType name="BeneficiaryIdentityFieldGroupChoiceType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This type defines that in common case at least one of the nested groups
+                should be included into addBeneficiaryBankAccount request document.
+                On UI it can be presented with drop-down list containing nested groups labels.
+                'minElementNum' minimum this number of the nested groups should be specified (1 by default).
+                'maxElementNum' maximum this number of the nested groups can be specified (1 by default).
+            </xsd:documentation>
+        </xsd:annotation>
+
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="beneficiaryIdentityFieldGroupsList" type="BeneficiaryIdentityGroupsListType" />
+        </xsd:sequence>
+
+        <xsd:attribute name="minGroupsListNum" type="xsd:int" use="optional"
+                       default="1" />
+        <xsd:attribute name="maxGroupsListNum" type="xsd:int" use="optional"
+                       default="1" />
+
+    </xsd:complexType>
+
+    <xsd:complexType name="BeneficiaryIdentityFieldsListType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This type defines a identity fields list.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="beneficiaryIdentityField" type="BeneficiaryIdentityFieldType"
+                         minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

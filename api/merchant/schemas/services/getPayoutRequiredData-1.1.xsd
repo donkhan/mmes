@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Document: getPayoutRequiredData-1.1.xsd
+	Version:  1.1
+	Copyright 2013 Earthport Plc. All rights reserved.
+-->
+<xsd:schema
+	xmlns="http://customer.endpoint.earthport.com/api/merchant/v1/services/getPayoutRequiredData"
+	targetNamespace="http://customer.endpoint.earthport.com/api/merchant/v1/services/getPayoutRequiredData"
+	xmlns:epcore="http://customer.endpoint.earthport.com/api/merchant/v2/components/core"
+	xmlns:epbb="http://customer.endpoint.earthport.com/api/merchant/v3/components/bankBase"
+	xmlns:eppo="http://customer.endpoint.earthport.com/api/merchant/v1/components/payoutBase"
+	xmlns:epifb="http://customer.endpoint.earthport.com/api/merchant/v1/components/identityFieldsBase"
+        xmlns:eppop="http://customer.endpoint.earthport.com/api/merchant/v1/components/purposeOfPaymentBase"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+
+	<xsd:import
+		namespace="http://customer.endpoint.earthport.com/api/merchant/v3/components/bankBase"
+		schemaLocation="../components/bankBaseTypes-3.1.xsd" />
+	<xsd:import
+		namespace="http://customer.endpoint.earthport.com/api/merchant/v2/components/core"
+		schemaLocation="../components/coreTypes-2.0.xsd" />
+	<xsd:import
+		namespace="http://customer.endpoint.earthport.com/api/merchant/v1/components/payoutBase"
+		schemaLocation="../components/payoutBaseTypes-1.3.xsd" />
+	<xsd:import
+		namespace="http://customer.endpoint.earthport.com/api/merchant/v1/components/identityFieldsBase"
+		schemaLocation="../components/identityFieldsBaseTypes-1.0.xsd" />
+    <xsd:import
+            namespace="http://customer.endpoint.earthport.com/api/merchant/v1/components/purposeOfPaymentBase"
+            schemaLocation="../components/purposeOfPaymentBaseTypes-1.1.xsd" />
+
+	<xsd:annotation>
+		<xsd:documentation>
+
+			<p>getPayoutRequiredData request</p>
+
+			<p>
+				Definition of XML document message for the
+				getPayoutRequiredData request function.
+				This function
+				is used by customers to obtain the list of
+				required fields to settle a payment.
+			</p>
+
+            <p>
+                This service must be called with either the
+                'getPayoutRequiredDataForCountryCurrency'
+                or the 'getPayoutRequiredDataForBank' element
+                populated, depending upon the context.
+            </p>
+
+			<p>
+				This service should normally be called with the
+                'getPayoutRequiredDataForCountryCurrency' element
+                populated just before making a service request to
+                addBeneficiaryBankAccount or validateBeneficiaryBankAccount
+                so as to discover the mandatory bank account fields
+                that will be expected and ensure they are supplied.
+				Payout details such as purpose of payment metadata 
+				should be used once the bank has been registered and
+                should be provided with the payout request
+			</p>
+
+			<p>
+				The 'getPayoutRequiredDataForCountryCurrency'
+                element should contain a country, a currency,
+				an optional identity Entity Type, an
+				optional locale and an optional service level.
+
+				If the locale parameter is not supplied it will
+				assume a default value of 'en'.
+
+				If the service level parameter is not supplied it will
+				assume a default value of 'standard'.
+			</p>
+
+            <p>
+                This service should be called with the
+                'getPayoutRequiredDataForBank' in order to obtain
+                Purpose of Payment metadata for a payment to a
+                beneficiary bank account which has previously been
+                registered. This faciliatates capture/confirmation of
+                Purpose of Payment metadata before calling the
+                payoutRequest service.
+            </p>
+
+            <p>
+                The 'getPayoutRequiredDataForBank' element
+                should contain a UserID, a BankID, an optional
+                PayerType, and an optional service level.
+
+                The UserID can contain an EP user ID (VAN),
+                MerchantUserID or both. If both an EP and
+                Merchant ID are supplied, they must match.
+
+                The BankID can contain an EP Bank ID, Merchant
+                Bank ID or both. If both an EP and Merchant ID
+                are supplied, they must match.
+
+                If the service level parameter is not supplied it will
+                assume a default value of 'standard'.
+            </p>
+
+		</xsd:documentation>
+	</xsd:annotation>
+
+	<xsd:element name="getPayoutRequiredData"
+		type="GetPayoutRequiredDataType" />
+
+	<xsd:complexType name="GetPayoutRequiredDataType">
+        <xsd:choice minOccurs="1" maxOccurs="1">
+            <xsd:element name="getPayoutRequiredDataForCountryCurrency" type="getPayoutRequiredDataForCountryCurrency" />
+            <xsd:element name="getPayoutRequiredDataForBank" type="getPayoutRequiredDataForBank" />
+        </xsd:choice>
+		<xsd:attribute name="version" type="xsd:decimal" use="required" />
+	</xsd:complexType>
+
+
+    <xsd:complexType name="getPayoutRequiredDataForCountryCurrency">
+        <xsd:sequence>
+            <xsd:element name="countryCode" type="epcore:CountryCodeType"
+                         minOccurs="1" maxOccurs="1" />
+            <xsd:element name="currencyCode" type="epcore:CurrencyCodeType"
+                         minOccurs="1" maxOccurs="1" />
+            <xsd:element name="beneficiaryIdentityEntityType" type="IdentityEntityType"
+                         minOccurs="0" maxOccurs="1" />
+            <xsd:element name="locale" type="epcore:LocaleType"
+                         minOccurs="0" maxOccurs="1" />
+            <xsd:element name="serviceLevel" type="eppo:ServiceLevelType"
+                         minOccurs="0" maxOccurs="1" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="getPayoutRequiredDataForBank">
+        <xsd:sequence>
+            <xsd:element name="usersBankID" type="epbb:UsersBankIDType" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="amount" type="epcore:MonetaryValueType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="payerType"
+                         type="eppo:PayerType" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The Payer Type is optional.
+                        If no Payer Type is specified then the default value of
+                        authenticatedCaller will be used
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="serviceLevel" type="eppo:ServiceLevelType"
+                         minOccurs="0" maxOccurs="1" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+	<xsd:annotation>
+		<xsd:documentation>
+
+			<p>getPayoutRequiredData response</p>
+
+			<p>
+				Definition of XML document message returned by the
+				getPayoutRequiredData function.
+			</p>
+
+			<p>
+				Following a successful service call, the response
+				contains a number of PurposeOfPaymentOptions.
+                If the getPayoutRequiredDataForCountryCurrency request type
+                was sent, the repsonse will also include a number of
+                beneficiaryBankAccountFieldGroup elements.
+
+				<b>beneficiaryBankAccountFieldGroup</b>
+				<br />
+				Each beneficiaryBankAccountFieldGroup describes one logical
+				grouping
+				of bank account data. Each beneficiaryBankAccountFieldGroup
+				would
+				normally be displayed in the UI on a separate horizontal row.
+
+				It contains the attributes
+
+				<ul>
+					<li>groupLabel: the suggested UI label for the group</li>
+					<li>mandatory: if true indicates that it is mandatory for data to
+						be entered in the input fields</li>
+				</ul>
+
+				<br />
+				and is composed of one or more beneficiaryBankAccountField elements.
+
+				<br />
+				<b>beneficiaryBankAccountField</b>
+				<br />
+
+				Each beneficiaryBankAccountField would normally be displayed
+				in the UI from left to right based on the tabOrder attribute.
+				<br />
+				The beneficiaryBankAccountField element contains
+				the following
+				attributes:
+
+				<ul>
+					<li>tabOrder: indicates the ordering of this field in the UI</li>
+					<li>parameterName: the name of the corresponding Earthport
+						parameter to use when calling addBeneficiaryBankAcount</li>
+					<li>displaySize: a suggested field size to display</li>
+					<li>maxSize: suggested client side syntactic validation rule</li>
+					<li>description: suggested roll-over or help text description to
+						assist users</li>
+					<li>separator: the separator to display following (to the right
+						hand side) this field, usually '-' or '/'</li>
+					<li>inputType: whether this field should be represented as a text
+						field or a list of options</li>
+					<li>subTitle: if present contains a sub-label to be displayed with
+						the field</li>
+					<li>locale: the localisation setting of this particular record</li>
+				</ul>
+
+				<br />
+				The beneficiaryBankAccountField contains optional listItem
+				sub-elements.
+				The listItem sub-elements would normally be present
+				where the inputType
+				attribute is
+				<i>'list'</i>
+				.
+				<br />
+
+				<b>listItem</b>
+				<br />
+				The listItem element contains the attributes
+				<ul>
+					<li>label: the name of the option in the list</li>
+					<li>value: the value of the corresponding paramaterName if the list
+						item is selected</li>
+				</ul>
+
+				<p>
+					Once values have been supplied for every one of the
+					beneficiaryBankAccountField
+					elements, there is now sufficient data to fully populate the
+					bankAccountDetails
+					portion of the beneficiaryBankAccount element as required by the
+					validateBeneficiaryBankAccount and addBeneficiaryBankAccount
+					services.
+				</p>
+
+				<p>				
+				<b>purposeOfPaymentFieldGroupsList</b> 
+				<br />
+
+					The purposeOfPaymentFieldGroup list shows whether 'purpose
+					of payment' metadata is required, and if so, lists valid purpose of
+					payment codes that are available.
+				<br />
+				<b>purposeOfPaymentCode</b>
+				<br />
+					Gives the code and associated description of a valid
+					purpose of payment for the input parameters 					
+
+				<br />
+				<b>purposeOfPaymentUsageRestrictions</b>
+				<br />
+					originatorType &amp; beneficiaryType : Indicates whether this purpose
+					of payment code is valid if the originator/beneficiary is an 
+					individual or legal entity. 
+					For instance some purpose of payment codes may not be applicable
+					for legal entities.
+
+				<br />
+				<b>additionalFieldsList</b>
+				<br />
+				   This optionally contains a list of additional data that may be required
+				   if the associated purpose of payment is selected. This section will list
+				   a selection of <b>'additionalFieldWithValues'</b> and/or 
+				   <b>additionalFieldWithValidator </b>
+				   
+				   <ul>
+				   <li /><b>'additionalFieldWithValues'</b> indicates the additional
+				   key that can be provided in the payoutDetails section of a payout request
+				   along with an indication of whether this additional payout details entry is mandatory.
+				   <br />
+				   <b>'additionalFieldWithValues'</b> will also be followed by a series of <b>fieldValues</b> 
+				   that list the valid codes and descriptions that can be submitted as the value of the 
+				   payoutDetail entry in the payout request.  
+
+				   <li /><b>additionalFieldWithValidator</b> indicates an additional key that can
+				   be provided in the payoutDetails section of a payout request, along with an indication
+				   of whether this additional payout details is mandatory
+				   
+				   <br />
+				   <b>additionalFieldWithValidator</b> also includes the validation expression that 
+				   will be applied to the value. This is a regular expression, and may be blank if 
+				   no validation will be applied.
+				   
+				   </ul>
+					
+				</p>								
+
+								
+			</p>
+
+		</xsd:documentation>
+	</xsd:annotation>
+	
+	<xsd:simpleType name="IdentityEntityType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Supported identity entity types.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="individual" />
+            <xsd:enumeration value="legalEntity" />
+        </xsd:restriction>
+    </xsd:simpleType>
+	
+	<xsd:element name="getPayoutRequiredDataResponse"
+		type="GetPayoutRequiredDataResponseType" />
+
+	<xsd:complexType name="GetPayoutRequiredDataResponseType">
+		<xsd:sequence>
+            <xsd:choice minOccurs="1" maxOccurs="1">
+                <xsd:element name="getPayoutRequiredDataForBank" type="getPayoutRequiredDataForBank" />
+                <xsd:sequence>
+                    <xsd:element name="getPayoutRequiredDataForCountryCurrency" type="getPayoutRequiredDataForCountryCurrency" />
+                    <xsd:element name="beneficiaryIdentityFieldGroupsList"
+                             type="epifb:BeneficiaryIdentityGroupsListType" minOccurs="1" maxOccurs="1"/>
+                    <xsd:element name="beneficiaryBankAccountFieldGroupsList"
+                             type="epbb:BeneficiaryBankAccountGroupsListType" minOccurs="1" maxOccurs="1"/>
+                </xsd:sequence>
+            </xsd:choice>
+            <xsd:element name="purposeOfPaymentFieldGroupsList"
+                         type="eppop:purposeOfPaymentFieldGroupsList" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

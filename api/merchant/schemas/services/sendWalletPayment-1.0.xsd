@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document: sendWalletPayment-1.0.xsd
+    Version: 1.0 Copyright 2014 Earthport Plc. All rights reserved.
+-->
+<xsd:schema
+        xmlns="http://customer.endpoint.earthport.com/api/merchant/v1/sendWalletPayment"
+        targetNamespace="http://customer.endpoint.earthport.com/api/merchant/v1/sendWalletPayment"
+        xmlns:epcore="http://customer.endpoint.earthport.com/api/merchant/v2/components/core"
+        xmlns:epident="http://customer.endpoint.earthport.com/api/merchant/v2/components/identityBase"
+        xmlns:eppo="http://customer.endpoint.earthport.com/api/merchant/v1/components/payoutBase"
+        xmlns:epw="http://customer.endpoint.earthport.com/api/merchant/v1/components/walletBase"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+        version="0.2">
+
+    <xsd:import
+            namespace="http://customer.endpoint.earthport.com/api/merchant/v2/components/core"
+            schemaLocation="../components/coreTypes-2.0.xsd"/>
+    <xsd:import
+            namespace="http://customer.endpoint.earthport.com/api/merchant/v1/components/payoutBase"
+            schemaLocation="../components/payoutBaseTypes-1.3.xsd"/>
+    <xsd:import
+            namespace="http://customer.endpoint.earthport.com/api/merchant/v2/components/identityBase"
+            schemaLocation="../components/identityBaseTypes-2.1.xsd"/>
+    <xsd:import
+            namespace="http://customer.endpoint.earthport.com/api/merchant/v1/components/walletBase"
+            schemaLocation="../components/walletBaseTypes-1.0.xsd"/>
+
+    <xsd:annotation>
+        <xsd:documentation>
+            <p>
+                Definition of the request and response XML document messages
+                forming the sendWalletPayment composite service.
+            </p>
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:element name="sendWalletPayment"
+                 type="sendWalletPaymentType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Root element for the prepareWalletPayment
+                service request XML.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType
+            name="sendWalletPaymentType">
+        <xsd:sequence>
+
+            <xsd:element name="merchantUserIdentity" type="epcore:MerchantUserIdentityType" minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						A unique reference for the merchant that
+						identifies the person or company on behalf of which
+						this account was set up.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			
+            <xsd:element name="accountCurrency" type="epcore:CurrencyCodeType"
+				minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						ISO 4217 3-character currency code used to set
+						the currency of the account. This setting defines the currency
+						that inbound funds will be converted to. If no conversion is
+						required set this value to ‘any’.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="managedMerchantIdentity" type="epcore:MerchantIdentityType" 
+				minOccurs="0" maxOccurs="1" >
+			</xsd:element>
+			
+			<xsd:element name="payerIdentity" type="epident:PayerIdentityType" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						The identification data of the payer including first name, last name
+						and some other fields such as address, identification document(s) number.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+
+			<xsd:element name="merchantWalletID" type="epw:merchantWalletIDType" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						Merchant generated reference that uniquely
+						identifies a registered wallet account.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="wallet" type="epw:walletType" minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						Details of the beneficiary wallet to which the payment is being sent.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+
+            <xsd:element name="merchantTransactionReference" type="epcore:MerchantTransactionRefType"
+                         minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The unique reference provided by the merchant,
+                        this will uniquely identify the transaction to
+                        the merchant.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="payoutRequestAmount" type="epcore:MonetaryValueType"
+                         minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Represents a currency and amount value.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="beneficiaryAmountInformation" type="BeneficiaryAmountInformationType"
+                         minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Used to specify the beneficiary amount and the payout currency.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="requestedFXType" type="RequestedFXType" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        This is not currently implemented and is reserved for future use. This
+                        will be used in conjunction with support for Bulk FX quotes.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            
+            <xsd:element name="beneficiaryStatementNarrative" type="epcore:GenericDescriptionType"
+				minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						Narrative text to be displayed on the to be passed as
+						the narrative visible to the beneficiary where sending
+						platforms supports this level of referencing.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>	
+            
+
+            <xsd:element name="fxTicketID" type="epcore:UIDType" default="0"
+                         minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Optional FxTicket Id to be used. This is a
+                        unique reference sent back to the Merchant as a
+                        response to getFXQuote/getBulkFXQuote as UID. If specified, the
+                        system will honour the rate specified in the FX
+                        Ticket for the Payment. The Earthport System
+                        will validate the specified FX Ticket including
+                        TTL on the Ticket. If the TTL has expired, the
+                        Earthport system will throw an error.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="payerType"
+                         type="eppo:PayerType" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The Payer Type is optional.
+                        If no Payer Type is specified then the default value of
+                        authenticatedCaller will be used
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="payoutDetails"
+                         type="eppo:PayoutDetailsType" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        PayoutDetails are reserved for future use
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+        </xsd:sequence>
+        <xsd:attribute name="version" type="xsd:decimal" use="required"/>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="BeneficiaryAmountInformationType">
+        <xsd:sequence>
+            <xsd:element name="beneficiaryAmount" type="epcore:MonetaryValueType"
+                         minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Used to specify the amount and currency the beneficiary should receive.
+                        The currency does not need to be the same as the payout currency, which
+                        is the debit currency the Merchant will use to fund the transaction.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="payoutCurrency" type="epcore:CurrencyCodeType"
+                         minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The requested payout currency.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+    <xsd:element name="sendWalletPaymentResponse"
+                 type="sendWalletPaymentResponseType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Root element for the prepareWalletPayment
+                service response XML.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType
+            name="sendWalletPaymentResponseType">
+        <xsd:sequence>
+            <xsd:element name="usersWalletID" type="epw:UsersWalletIDType"
+                         minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="paymentID" type="epcore:PaymentIDType"
+                         minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The ID that has been generated for this transaction.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="merchantTransactionReference" type="epcore:MerchantTransactionRefType"
+                         minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The unique payment reference provided by the merchant, which can be
+                        used to reconcile the transaction with the request.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="feeValue" type="epcore:MonetaryValueType"
+                         minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The fee that was applied during the processing
+                        of the payout request.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="fxRate" type="epcore:FXRateType"
+                         minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Represents a foreign exchange rate used during a
+                        specific transaction.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="liquidityValue" type="epcore:MonetaryValueType"
+                         minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Represents a currency and amount value. The
+                        liquidity value debited to service the payout request.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="settlementValue" type="epcore:MonetaryValueType"
+                         minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The settlement value that will be sent by
+                        instruction to the beneficiary wallet.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="acceptedDate" type="epcore:GenericTimestampType"
+                         minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Timestamp when the payout instruction was accepted by
+                        the system.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="RequestedFXType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Method of FX that is requested by the merchant and for which EPS2 will attempt to use
+                in order to settle the payout request.
+                FF (Fixed to Fixed) is where no FX will be performed as payout and beneficiary currencies are the same.
+                FV (Fixed to Variable) uses the supplied payout request amount in order to determine the beneficiary
+                amount.
+                VF (Variable to Fixed) uses the supplied beneficiary amount in order to determine the payout amount.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="FF"/>
+            <xsd:enumeration value="FV"/>
+            <xsd:enumeration value="VF"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

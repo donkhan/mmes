@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Document: notificationBaseTypes-1.3.xsd
+	Version:  1.3
+	Copyright 2008 Earthport Plc. All rights reserved.	
+-->
+<xsd:schema
+	targetNamespace="http://customer.endpoint.earthport.com/api/merchant/v1/components/notificationBase"
+	xmlns="http://customer.endpoint.earthport.com/api/merchant/v1/components/notificationBase"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:epcore="http://customer.endpoint.earthport.com/api/merchant/v2/components/core"
+	xmlns:epbb="http://customer.endpoint.earthport.com/api/merchant/v3/components/bankBase"
+	elementFormDefault="qualified"
+	version="1.3">
+
+	<xsd:import namespace="http://customer.endpoint.earthport.com/api/merchant/v3/components/bankBase" 
+   		schemaLocation="bankBaseTypes-3.1.xsd" />
+    <xsd:import namespace="http://customer.endpoint.earthport.com/api/merchant/v2/components/core" 
+    	schemaLocation="coreTypes-2.0.xsd" />
+    	
+    <xsd:complexType name="NotificationType" abstract="true">
+		<xsd:sequence>
+			<xsd:element name="notificationType" type="xsd:string"
+				minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						Enumeration of notification types. It can be
+						DEPOSIT, REFUND, REJECTED_PAYOUT, WALLET_PAYMENT_STATUS
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="epUserID" type="epcore:EPUserIDType"
+				minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						The EP User ID is the equivalent of the Virtual
+						Account Number (VAN) that can be used as a
+						unique identifier for a merchant.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="merchantUserIdentity"
+				type="epcore:MerchantUserIdentityType" minOccurs="1"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						The account name associated with the users VAN
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="epTransactionID"
+				type="epcore:PaymentIDType" minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						EPS payment identity.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="timestamp"
+				type="epcore:GenericTimestampType" minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						The transaction time stamp in the format:
+						YYYYMMDDHHMMSS
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="managedMerchantIdentity"
+				type="epcore:MerchantIdentityType" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						Refers to the descriptive name used to identify
+						a given merchant. It is unique across Earthport
+						merchants.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ReturnNotificationType">
+		<xsd:annotation>
+			<xsd:documentation>
+				A financial transaction representing a payout from an account held in the EPS system.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="NotificationType">
+				<xsd:sequence>
+					<xsd:element name="refundedAmount" type="epcore:MonetaryValueType" minOccurs="1" maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>
+						The amount of the refund.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="payoutAmount" type="epcore:MonetaryValueType" minOccurs="1" maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>
+						The original instruction amount
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="payoutTransactionID" type="PayoutTransactionIDType" minOccurs="1" maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>
+						One or more EPS and/or Merchant transaction IDs
+						uniquely identifying transactions in the EPS
+						system.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="epBankID" type="epbb:EPBankIDType" minOccurs="1" maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>
+						The unique ID of a beneficiary bank account.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="reason" type="xsd:string" minOccurs="1" maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>
+						Reason for rejection
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="reasonID" type="xsd:int" maxOccurs="1" minOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>
+						Unique Reason ID for rejection/return
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="WalletPaymentStatusNotificationType">
+	<xsd:annotation>
+		<xsd:documentation>
+			A notification sent to inform a merchant of a state change of wallet payment
+			For instance a notification that the payment has been sent or rejected.
+		</xsd:documentation>
+	</xsd:annotation>
+	<xsd:complexContent>
+		<xsd:extension base="NotificationType">
+			<xsd:sequence>
+
+			<xsd:element name="statusCode" type="xsd:positiveInteger" minOccurs="1" maxOccurs="1" >
+			<xsd:annotation>
+				<xsd:documentation>
+					Status codes to be documented separately - will allow determination of 
+					transaction status, e.g. 400 (Payment Sent), 500 (Payment Rejected)
+				</xsd:documentation>
+			</xsd:annotation>
+			</xsd:element>
+
+			<xsd:element name="statusDescription" type="xsd:string" minOccurs="1" maxOccurs="1" >
+			<xsd:annotation>
+				<xsd:documentation>
+					Description associated with status code.
+				</xsd:documentation>
+			</xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="failureReasons" type="WalletPaymentFailureReasonListType" minOccurs="0" maxOccurs="1"/>
+
+		</xsd:sequence>
+		</xsd:extension>
+	</xsd:complexContent>
+	</xsd:complexType>
+
+    <xsd:complexType name="WalletPaymentFailureReasonListType" >
+        <xsd:annotation>
+            <xsd:documentation>
+                Array of wallet payment failure reasons
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="failureReason"
+                         type="WalletPaymentFailureReasonType" minOccurs="0" maxOccurs="unbounded">
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="WalletPaymentFailureReasonType">
+        <xsd:sequence>
+            <xsd:element name="reasonID" type="xsd:int" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Unique Reason ID for rejection/return
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="reason" type="xsd:string" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>Reason for rejection</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+	<xsd:complexType name="RejectNotificationType">
+		<xsd:annotation>
+			<xsd:documentation>
+				A financial transaction representing a payout from an account held in the EPS system.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="NotificationType">
+				<xsd:sequence>	
+					<xsd:element name="refundedAmount"
+				type="epcore:MonetaryValueType" minOccurs="1" maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>
+						The amount of the refund.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="payoutAmount"
+				type="epcore:MonetaryValueType" minOccurs="1" maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>
+						The original instruction amount
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="payoutTransactionID"
+				type="PayoutTransactionIDType" minOccurs="1" maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>
+						One or more EPS and/or Merchant transaction IDs
+						uniquely identifying transactions in the EPS
+						system.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="epBankID" type="epbb:EPBankIDType"
+				minOccurs="1" maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>
+						The unique ID of a beneficiary bank account.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="reason" type="xsd:string" minOccurs="1"
+				maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>
+						Reason for rejection
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="reasonID" type="xsd:int" maxOccurs="1" minOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>
+						Unique Reason ID for rejection/return
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="DepositNotificationType">
+		<xsd:annotation>
+			<xsd:documentation>
+				A financial transaction representing a payout from an account held in the EPS system.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="NotificationType">
+				<xsd:sequence>
+					<xsd:element name="depositAmount"
+						type="epcore:MonetaryValueType" minOccurs="0" maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>
+								The amount deposited (before any Forex
+								conversion)
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="depositedAmount"
+						type="epcore:MonetaryValueType" maxOccurs="1" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>
+								The amount deposited (after any Forex
+								conversion)
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>	
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="PayoutTransactionIDType">
+		<xsd:annotation>
+			<xsd:documentation>
+				An EPS and/or Merchant transaction ID that uniquely identifies
+				a transaction in the EPS system
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="epTransactionID" type="epcore:PaymentIDType"
+				minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						An EPS transaction ID uniquely identifying 
+						a transaction in the EPS system.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="merchantTransactionID" type="epcore:MerchantTransactionRefType" 
+				minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						A transaction ID (as assigned
+						by the merchant) that (together with a
+						Customer ID) can be used to uniquely
+						identify a transaction in the EPS
+						system.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AcknowledgementType" abstract="true">
+		<xsd:sequence>
+			<xsd:element name="ackMessage" type="xsd:string"
+				minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						Acknoweledgment Message, will most likely contain OK or an error value
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="version" type="xsd:decimal" use="required" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="NotificationAcknowledgementType">
+		<xsd:complexContent>
+			<xsd:extension base="AcknowledgementType">
+				<xsd:sequence>
+					<xsd:element name="epTransactionID" type="epcore:PaymentIDType"
+		        		 minOccurs="1" maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>
+								EPS payment identity.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AcknowledgeBatchNotificationsType">
+		<xsd:complexContent>
+			<xsd:extension base="AcknowledgementType">
+				<xsd:sequence>
+					<xsd:element name="maxEpTransactionID" type="epcore:PaymentIDType"
+		        		 minOccurs="1" maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>
+								The maximum EPS payment identity that is being acknowledged.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>	
+				</xsd:sequence>
+				
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="NotificationListType">
+		<xsd:annotation>
+			<xsd:documentation>
+				Array of notifications which can be of any type
+				- rejections, deposits, refunds, etc.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="notification"
+				type="NotificationType" minOccurs="0"
+				maxOccurs="unbounded">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

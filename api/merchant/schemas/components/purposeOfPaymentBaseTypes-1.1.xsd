@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Document: purposeOfPaymentBaseTypes-1.1.xsd
+	Version:  1.1
+	Copyright 2013 Earthport Plc. All rights reserved.
+-->
+<xsd:schema
+	xmlns="http://customer.endpoint.earthport.com/api/merchant/v1/components/purposeOfPaymentBase"
+	targetNamespace="http://customer.endpoint.earthport.com/api/merchant/v1/components/purposeOfPaymentBase"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified">
+
+	<xsd:import namespace="http://customer.endpoint.earthport.com/api/merchant/v2/components/core" 
+    	schemaLocation="coreTypes-2.0.xsd" />
+
+	<xsd:import namespace="http://customer.endpoint.earthport.com/api/merchant/v2/components/identityBase" 
+    	schemaLocation="identityBaseTypes-2.1.xsd" />
+
+	<xsd:annotation>
+		<xsd:documentation>
+			Purpose of Payment base type definitions as used by Earthport
+		</xsd:documentation>
+	</xsd:annotation>
+
+	<xsd:complexType name="purposeOfPaymentFieldGroupsList">
+		<xsd:annotation>
+			<xsd:documentation>
+				This group contains all configuration information
+				for Purpose of Payment options.
+
+				The "mandatory" attribute indicates whether 
+				provision of Purpose of Payment data is 
+				required for the Payout to be accepted.
+
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="purposeOfPaymentCode"
+                         type="purposeOfPaymentCode" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="mandatory" type="xsd:boolean" use="required" />
+	</xsd:complexType>
+
+	<xsd:complexType name="purposeOfPaymentCode">
+		<xsd:annotation>
+			<xsd:documentation>
+				This contains a specific Purpose of Payment
+				option, consisting of a code and a human
+				readable description.
+
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="purposeOfPaymentUsageRestrictions" type="purposeOfPaymentUsageRestrictions" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="description" type="xsd:string" use="required" />
+		<xsd:attribute name="code" type="xsd:string" use="required" />
+	</xsd:complexType>
+
+
+	<xsd:complexType name="purposeOfPaymentUsageRestrictions">
+		<xsd:annotation>
+			<xsd:documentation>
+				Usage restrictions apply where a specified
+				code is only acceptable for a given type of
+				payer or beneficiary.
+
+				This attribute indicates whether the code
+				can be used for Individuals and/or Legal Entities,
+				for both payer and beneficiary parties.
+
+				Additional field specifications identify further
+				data that is required, given the chosen Purpose
+				of Payment.
+
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:sequence>
+				<xsd:element name="originatorType" type="identityRestriction" minOccurs="1" maxOccurs="1"/>
+				<xsd:element name="beneficiaryType" type="identityRestriction" minOccurs="1" maxOccurs="1"/>
+				<xsd:element name="additionalFieldsList" type="additionalFieldsList" minOccurs="0" maxOccurs="1" />
+			</xsd:sequence>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<xsd:complexType name="identityRestriction">
+		<xsd:attribute name="individual" type="xsd:boolean" use="required" />
+		<xsd:attribute name="legalEntity" type="xsd:boolean" use="required" />
+	</xsd:complexType>
+
+	<xsd:complexType name="additionalFieldsList">
+		<xsd:annotation>
+			<xsd:documentation>
+				Additional fields will be one of two types; 
+				free text or list options. 
+
+				'additionalFieldWithValues' gives a list of
+				acceptable responses.
+
+				'additionalFieldWithValidator' is a free
+				text response.  
+
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="additionalFieldWithValues" type="additionalFieldWithValues"/>
+				<xsd:element name="additionalFieldWithValidator" type="additionalFieldWithValidator"/>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="additionalFieldWithValues">
+		<xsd:annotation>
+			<xsd:documentation>
+				Key and label pairs indicate the accepted 
+				responses for an 'additionalFieldWithValues'
+				data field. They can be used to create a 
+				select list within a User Interface.
+
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="fieldValue" minOccurs="1" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:attribute name="option" />
+					<xsd:attribute name="label" />
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="label" type="xsd:string" use="required"/>
+		<xsd:attribute name="key" type="xsd:string" use="required"/>
+		<xsd:attribute name="mandatory" type="xsd:boolean" use="required"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="additionalFieldWithValidator">
+		<xsd:annotation>
+			<xsd:documentation>
+				The 'Validation' attribute may contain a Regular
+				Expression, which should be used to validate
+				data before submission.				
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="label" type="xsd:string" use="required" />
+		<xsd:attribute name="key" type="xsd:string" use="required" />
+		<xsd:attribute name="validation" type="xsd:string" use="required" />
+		<xsd:attribute name="mandatory" type="xsd:boolean" use="required"/>
+	</xsd:complexType>
+
+</xsd:schema>
