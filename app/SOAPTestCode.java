@@ -13,11 +13,12 @@ public class SOAPTestCode {
             SOAPPart part = soapMsg.getSOAPPart();
             SOAPEnvelope envelope = part.getEnvelope();
             SOAPHeader header = envelope.getHeader();
-
-            /*
+            
             SOAPHeaderElement security = (SOAPHeaderElement)header.addChildElement("Security", "wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
             security.setMustUnderstand(true);
+            security.setAttributeNS("wsu", "wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd");
 
+            
             SOAPElement usernameToken = security.addChildElement("UsernameToken","wsse");
             usernameToken.addAttribute(new QName("wsu","Id"),"UsernameToken-9CDC29E8F0E9EE9369152326691084057");
             SOAPElement userName = usernameToken.addChildElement("Username","wsse");
@@ -25,7 +26,7 @@ public class SOAPTestCode {
 
             SOAPElement passWord = usernameToken.addChildElement("Password","wsse");
             passWord.addTextNode("PASSWORD");
-            */
+            
 
             SOAPBody body = envelope.getBody();
             QName bodyName = new QName("", "submitDocument", "v1");
@@ -38,12 +39,13 @@ public class SOAPTestCode {
             co.setAttribute("xmlns:ns3","http://customer.endpoint.earthport.com/api/merchant/v2/components/identityBase");
             co.setAttribute("version","1.0");
 
+            SOAPElement currency = parameters.addChildElement(new QName("accountCurrency","accountCurrency","ns2"));
+            currency.setTextContent("GBP");
+            
             SOAPElement mui = parameters.addChildElement(new QName("merchantUserIdentity","merchantUserIdentity","ns2"));
             mui.setTextContent("test_user343");
 
-            SOAPElement currency = parameters.addChildElement(new QName("accountCurrency","accountCurrency","ns2"));
-            currency.setTextContent("GBP");
-
+            
             SOAPElement payerIdentity = parameters.addChildElement(new QName("payerIdentity","payerIdentity","ns2"));
             SOAPElement payerIndividiualIdentity = payerIdentity.addChildElement(new QName("payerIndividualIdentity",
                     "payerIndividualIdentity","ns3"));
@@ -53,7 +55,9 @@ public class SOAPTestCode {
 
             SOAPElement address = payerIndividiualIdentity.addChildElement(new QName("address","address","ns3"));
             address.addChildElement(new QName("addressLine1","addressLine1","ns3")).setTextContent("13th Cross");
-
+            address.addChildElement(new QName("addressLine2","addressLine2","ns3")).setTextContent("Wilson Garden");
+            address.addChildElement(new QName("city","city","ns3")).setTextContent("Bangalore");
+            address.addChildElement(new QName("country","country","ns3")).setTextContent("IN");
 
             soapMsg.writeTo(System.out);
         }catch(Throwable t){
