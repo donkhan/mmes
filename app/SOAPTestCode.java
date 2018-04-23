@@ -1,5 +1,7 @@
 import javax.xml.namespace.*;
 import javax.xml.soap.*;
+
+import com.earthport.bind.v1.createOrUpdateUser.CreateOrUpdateUserType;
 import sun.misc.BASE64Encoder;
 import java.io.*;
 import javax.xml.transform.*;
@@ -7,7 +9,9 @@ import javax.xml.transform.stream.*;
 import java.text.*;
 import java.security.*;
 import java.util.*;
-
+import play.libs.WS;
+import play.libs.WS.*;
+import javax.xml.bind.*;
 /**
  * Created by kkhan on 16/04/18.
  */
@@ -53,13 +57,15 @@ public class SOAPTestCode {
     }
 
     private static String getPassword(String nonce,String created){
-        String  x = nonce + created + "gEQypcOSiBfF";
+        String password = "gEQypcOSiBfF";
+        String  x = nonce + created + password;
         System.out.println("Clear Text Password " + x);
         String sha1 = encryptPassword(x);
         String base64encoded = new BASE64Encoder().encode(sha1.getBytes());
         System.out.println("sha1 = " + sha1);
         System.out.println("Encoded = " + base64encoded);
-        return base64encoded;
+        //return base64encoded;
+        return password;
     }
 
     private static String getNonce(){
@@ -101,6 +107,12 @@ public class SOAPTestCode {
     }
 
     private static void addSOAPBody(SOAPEnvelope envelope,SOAPHeader header) throws SOAPException{
+        CreateOrUpdateUserType cot = new CreateOrUpdateUserType();
+        cot.setMerchantUserIdentity("EETTE");
+        cot.setAccountCurrency("GBP");
+        printS(cot);
+
+
         SOAPBody body = envelope.getBody();
         QName bodyName = new QName("", "submitDocument", "v1");
         SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
@@ -115,8 +127,11 @@ public class SOAPTestCode {
         SOAPElement currency = parameters.addChildElement(new QName("accountCurrency","accountCurrency","ns2"));
         currency.setTextContent("GBP");
 
+
         SOAPElement mui = parameters.addChildElement(new QName("merchantUserIdentity","merchantUserIdentity","ns2"));
         mui.setTextContent("test_user343");
+        co.addChildElement(mui);
+        co.addChildElement(currency);
 
         SOAPElement payerIdentity = parameters.addChildElement(new QName("payerIdentity","payerIdentity","ns2"));
         SOAPElement payerIndividiualIdentity = payerIdentity.addChildElement(new QName("payerIndividualIdentity",
@@ -130,6 +145,21 @@ public class SOAPTestCode {
         address.addChildElement(new QName("addressLine2","addressLine2","ns3")).setTextContent("Wilson Garden");
         address.addChildElement(new QName("city","city","ns3")).setTextContent("Bangalore");
         address.addChildElement(new QName("country","country","ns3")).setTextContent("IN");
+        co.addChildElement(payerIdentity);
+    }
+
+    public static void printS(Object o){
+        try {
+            JAXBContext context = JAXBContext.newInstance(CreateOrUpdateUserType.class);
+            Marshaller m = context.createMarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            final ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
+            final StreamResult result = new StreamResult(streamOut);
+            m.marshal(o,result);
+            System.out.println(streamOut.toString());
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String args[]){
@@ -142,14 +172,37 @@ public class SOAPTestCode {
             addSOAPHeader(envelope,soapMsg.getSOAPHeader());
             addSOAPBody(envelope,soapMsg.getSOAPHeader());
             System.out.println(printSoapMessage(soapMsg));
+            sendToProxyServer(soapMsg);
            // WSRequest request = WS.url("http://linuxbox:567");
         }catch(Throwable t){
             t.printStackTrace();
         }
-
     }
 
-    public static String printSoapMessage(final SOAPMessage soapMessage) throws TransformerFactoryConfigurationError,
+    private static void sendToProxyServer(SOAPMessage soapMessage){
+        String host = "101.99.73.46";
+        String port = "2001";
+        String scheme = "http";
+        String endpoint = "earthport/MerchantAPI";
+        String url = scheme  + "://" + host + ":" + port + "/" + endpoint;
+        System.out.println(url);
+
+        try{
+            System.out.println("Going to create Request...");
+            WSRequest request = WS.url("http://101.99.73.46:2001/earthport/MerchantAPI");
+            System.out.println("Request is created");
+            request.setHeader("SOAPAction","").setHeader("Content-Type","text/xml");
+            request.body(printSoapMessage(soapMessage));
+            System.out.println("Body is set");
+            HttpResponse response = request.post();
+
+            System.out.println("Response status " + response.getStatus());
+        }catch(Throwable t){
+            t.printStackTrace();
+        }
+    }
+
+    private static String printSoapMessage(final SOAPMessage soapMessage) throws TransformerFactoryConfigurationError,
             TransformerConfigurationException, SOAPException, TransformerException{
         final TransformerFactory transformerFactory = TransformerFactory.newInstance();
         final Transformer transformer = transformerFactory.newTransformer();
