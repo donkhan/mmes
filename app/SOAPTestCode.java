@@ -54,6 +54,7 @@ public class SOAPTestCode {
 
     private static String getPassword(String nonce,String created){
         String  x = nonce + created + "gEQypcOSiBfF";
+        System.out.println("Clear Text Password " + x);
         String sha1 = encryptPassword(x);
         String base64encoded = new BASE64Encoder().encode(sha1.getBytes());
         System.out.println("sha1 = " + sha1);
