@@ -2,6 +2,11 @@ import javax.xml.namespace.*;
 import javax.xml.soap.*;
 
 import com.earthport.bind.v1.createOrUpdateUser.CreateOrUpdateUserType;
+import com.earthport.bind.v2.common.identitybase.AddressType;
+import com.earthport.bind.v2.common.identitybase.IndividualNameType;
+import com.earthport.bind.v2.common.identitybase.PayerIdentityType;
+import com.earthport.bind.v2.common.identitybase.PayerIndividualIdentityType;
+import com.sun.xml.internal.messaging.saaj.soap.name.NameImpl;
 import sun.misc.BASE64Encoder;
 import java.io.*;
 import javax.xml.transform.*;
@@ -20,8 +25,6 @@ public class SOAPTestCode {
 
     private static String getCreatedAt(){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
-        //System.out.println(sdf.format(new java.util.Date()));
-        //System.out.println("2018-04-09T09:41:50.840Z");
         return sdf.format(new java.util.Date());
     }
 
@@ -106,33 +109,54 @@ public class SOAPTestCode {
         createdElement.setTextContent(created);
     }
 
-    private static void addSOAPBody(SOAPEnvelope envelope,SOAPHeader header) throws SOAPException{
+    private static void addSOAPBody_new(SOAPEnvelope envelope,SOAPHeader header) throws SOAPException{
         CreateOrUpdateUserType cot = new CreateOrUpdateUserType();
+        PayerIdentityType pit = new PayerIdentityType();
+        PayerIndividualIdentityType piit = new PayerIndividualIdentityType();
+        AddressType address = new AddressType();
+        address.setAddressLine1("10th Cross");
+        address.setAddressLine2("2nd Main");
+        address.setAddressLine3("Wilson Garden");
+        address.setCity("Bangalore");
+        address.setCountry("India");
+        address.setPostcode("560027");
+        piit.setAddress(address);
+        IndividualNameType name = new IndividualNameType();
+        name.setGivenNames("Donald");
+        name.setFamilyName("Trump");
+        piit.setName(name);
+        pit.setPayerIndividualIdentity(piit);
         cot.setMerchantUserIdentity("EETTE");
         cot.setAccountCurrency("GBP");
-        printS(cot);
+        cot.setVersion(new java.math.BigDecimal(1.0));
+        cot.setPayerIdentity(pit);
+        SOAPElement soapElement = getSOAPElement(cot);
+        SOAPBody body = envelope.getBody();
+        QName bodyName = new QName("", "submitDocument", "v1");
+        SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
+        SOAPElement parameters = bodyElement.addChildElement(new QName("parameters"));
+        parameters.addChildElement(soapElement);
+    }
 
+    private static void addSOAPBody(SOAPEnvelope envelope,SOAPHeader header) throws SOAPException{
 
         SOAPBody body = envelope.getBody();
         QName bodyName = new QName("", "submitDocument", "v1");
         SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
         SOAPElement parameters = bodyElement.addChildElement(new QName("parameters"));
+
         SOAPElement co = parameters.addChildElement(new QName("http://customer.endpoint.earthport.com/api/merchant/v1/services/createOrUpdateUser",
                 "createOrUpdateUser","ns2"));
 
         co.setAttribute("xmlns:ns","http://customer.endpoint.earthport.com/api/merchant/v2/components/core");
         co.setAttribute("xmlns:ns3","http://customer.endpoint.earthport.com/api/merchant/v2/components/identityBase");
         co.setAttribute("version","1.0");
-
-        SOAPElement currency = parameters.addChildElement(new QName("accountCurrency","accountCurrency","ns2"));
+        SOAPElement mui = co.addChildElement("merchantUserIdentity","ns2");
+        mui.setTextContent("test_user343");
+        SOAPElement currency = co.addChildElement("accountCurrency","ns2");
         currency.setTextContent("GBP");
 
-
-        SOAPElement mui = parameters.addChildElement(new QName("merchantUserIdentity","merchantUserIdentity","ns2"));
-        mui.setTextContent("test_user343");
-        co.addChildElement(mui);
-        co.addChildElement(currency);
-
+        /*
         SOAPElement payerIdentity = parameters.addChildElement(new QName("payerIdentity","payerIdentity","ns2"));
         SOAPElement payerIndividiualIdentity = payerIdentity.addChildElement(new QName("payerIndividualIdentity",
                 "payerIndividualIdentity","ns3"));
@@ -146,20 +170,24 @@ public class SOAPTestCode {
         address.addChildElement(new QName("city","city","ns3")).setTextContent("Bangalore");
         address.addChildElement(new QName("country","country","ns3")).setTextContent("IN");
         co.addChildElement(payerIdentity);
+        */
     }
 
-    public static void printS(Object o){
+
+    public static SOAPElement getSOAPElement(Object o) throws SOAPException{
         try {
+            SOAPElement soapElement = javax.xml.soap.SOAPFactory.newInstance().createElement("ns2");
             JAXBContext context = JAXBContext.newInstance(CreateOrUpdateUserType.class);
             Marshaller m = context.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             final ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
-            final StreamResult result = new StreamResult(streamOut);
-            m.marshal(o,result);
-            System.out.println(streamOut.toString());
+            m.marshal(o,soapElement);
+            System.out.println("Marshalled...");
+            return soapElement;
         } catch (JAXBException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     public static void main(String args[]){
@@ -172,8 +200,7 @@ public class SOAPTestCode {
             addSOAPHeader(envelope,soapMsg.getSOAPHeader());
             addSOAPBody(envelope,soapMsg.getSOAPHeader());
             System.out.println(printSoapMessage(soapMsg));
-            sendToProxyServer(soapMsg);
-           // WSRequest request = WS.url("http://linuxbox:567");
+           // sendToProxyServer(soapMsg);
         }catch(Throwable t){
             t.printStackTrace();
         }
