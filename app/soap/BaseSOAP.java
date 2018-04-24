@@ -15,7 +15,7 @@ import java.util.Formatter;
 /**
  * Created by kkhan on 24/04/18.
  */
-public class BaseSOAP {
+public abstract class BaseSOAP {
 
     private static String getCreatedAt(){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
@@ -109,5 +109,23 @@ public class BaseSOAP {
         final StreamResult result = new StreamResult(streamOut);
         transformer.transform(soapContent, result);
         return streamOut.toString();
+    }
+
+    public abstract void addSOAPBody(SOAPEnvelope envelope) throws SOAPException;
+    public SOAPMessage construct(){
+        try {
+            MessageFactory factory = MessageFactory.newInstance(SOAPConstants.DEFAULT_SOAP_PROTOCOL);
+            SOAPMessage soapMsg = factory.createMessage();
+            SOAPPart part = soapMsg.getSOAPPart();
+            SOAPEnvelope envelope = part.getEnvelope();
+            envelope.setAttribute("xmlns:v1","http://customer.endpoint.earthport.com/api/merchant/v1");
+            addSOAPHeader(envelope,soapMsg.getSOAPHeader());
+            addSOAPBody(envelope);
+            play.Logger.debug(printSoapMessage(soapMsg));
+            return soapMsg;
+        }catch(Throwable t){
+            t.printStackTrace();
+        }
+        return null;
     }
 }

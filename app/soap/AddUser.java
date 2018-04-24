@@ -8,52 +8,33 @@ import javax.xml.soap.*;
  */
 public class AddUser extends BaseSOAP{
 
-    private void addSOAPBody(SOAPEnvelope envelope,SOAPHeader header) throws SOAPException{
+    public void addSOAPBody(SOAPEnvelope envelope) throws SOAPException{
         SOAPBody body = envelope.getBody();
         QName bodyName = new QName("", "submitDocument", "v1");
         SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
         SOAPElement parameters = bodyElement.addChildElement(new QName("parameters"));
-        SOAPElement co = parameters.addChildElement(new QName("http://customer.endpoint.earthport.com/api/merchant/v1/services/createOrUpdateUser",
-                "createOrUpdateUser","ns1"));
-        co.setAttribute("xmlns:ns","http://customer.endpoint.earthport.com/api/merchant/v2/components/core");
-        co.setAttribute("xmlns:ns2","http://customer.endpoint.earthport.com/api/merchant/v2/components/identityBase");
-        co.setAttribute("version","1.0");
-        SOAPElement mui = co.addChildElement("merchantUserIdentity","ns1");
+        SOAPElement createOrUpdateRequest = parameters.addChildElement(new QName("http://customer.endpoint.earthport.com/api/merchant/v1/services/createOrUpdateUser",
+                "createOrUpdateUser","cour"));
+        createOrUpdateRequest.setAttribute("xmlns:ns","http://customer.endpoint.earthport.com/api/merchant/v2/components/core");
+        createOrUpdateRequest.setAttribute("xmlns:pii","http://customer.endpoint.earthport.com/api/merchant/v2/components/identityBase");
+        createOrUpdateRequest.setAttribute("version","1.0");
+        SOAPElement mui = createOrUpdateRequest.addChildElement("merchantUserIdentity","cour");
         mui.setTextContent("test_user343");
-        SOAPElement currency = co.addChildElement("accountCurrency","ns1");
+        SOAPElement currency = createOrUpdateRequest.addChildElement("accountCurrency","cour");
         currency.setTextContent("GBP");
-
-        SOAPElement payerIdentity = co.addChildElement("payerIdentity","ns1");
+        SOAPElement payerIdentity = createOrUpdateRequest.addChildElement("payerIdentity","cour");
         SOAPElement payerIndividiualIdentity = payerIdentity.addChildElement(
-                "payerIndividualIdentity","ns2");
-        SOAPElement name = payerIndividiualIdentity.addChildElement("name","ns2");
-        name.addChildElement("givenNames","ns2").setTextContent("Donald");
-        name.addChildElement("familyName","ns2").setTextContent("Trump");
-
-
-        SOAPElement address = payerIndividiualIdentity.addChildElement("address","ns2");
-        address.addChildElement("addressLine1","ns2").setTextContent("13th Cross");
-        address.addChildElement("addressLine2","ns2").setTextContent("Wilson Garden");
-        address.addChildElement("city","ns2").setTextContent("Bangalore");
-        address.addChildElement("country","ns2").setTextContent("IN");
-
+                "payerIndividualIdentity","pii");
+        SOAPElement name = payerIndividiualIdentity.addChildElement("name","pii");
+        name.addChildElement("givenNames","pii").setTextContent("Donald");
+        name.addChildElement("familyName","pii").setTextContent("Trump");
+        SOAPElement address = payerIndividiualIdentity.addChildElement("address","pii");
+        address.addChildElement("addressLine1","pii").setTextContent("13th Cross");
+        address.addChildElement("addressLine2","pii").setTextContent("Wilson Garden");
+        address.addChildElement("city","pii").setTextContent("Bangalore");
+        address.addChildElement("country","pii").setTextContent("IN");
     }
 
-    public SOAPMessage construct(){
-        try {
-            MessageFactory factory = MessageFactory.newInstance(SOAPConstants.DEFAULT_SOAP_PROTOCOL);
-            SOAPMessage soapMsg = factory.createMessage();
-            SOAPPart part = soapMsg.getSOAPPart();
-            SOAPEnvelope envelope = part.getEnvelope();
-            envelope.setAttribute("xmlns:v1","http://customer.endpoint.earthport.com/api/merchant/v1");
-            addSOAPHeader(envelope,soapMsg.getSOAPHeader());
-            addSOAPBody(envelope,soapMsg.getSOAPHeader());
-            play.Logger.debug(printSoapMessage(soapMsg));
-            return soapMsg;
-        }catch(Throwable t){
-            t.printStackTrace();
-        }
-        return null;
-    }
+
 
 }
