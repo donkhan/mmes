@@ -23,21 +23,22 @@ public class AddUser extends BaseSOAP{
         SOAPElement currency = co.addChildElement("accountCurrency","ns2");
         currency.setTextContent("GBP");
 
-        /*
+
         SOAPElement payerIdentity = parameters.addChildElement(new QName("payerIdentity","payerIdentity","ns2"));
         SOAPElement payerIndividiualIdentity = payerIdentity.addChildElement(new QName("payerIndividualIdentity",
                 "payerIndividualIdentity","ns3"));
-        SOAPElement name = payerIndividiualIdentity.addChildElement(new QName("name","name","ns3"));
-        name.addChildElement(new QName("givenNames","givenNames","ns3")).setTextContent("Donald");
-        name.addChildElement(new QName("familyName","familyName","ns3")).setTextContent("Trump");
+        SOAPElement name = payerIndividiualIdentity.addChildElement("name","ns3");
+        name.addChildElement("givenNames","ns3").setTextContent("Donald");
+        name.addChildElement("familyName","ns3").setTextContent("Trump");
 
-        SOAPElement address = payerIndividiualIdentity.addChildElement(new QName("address","address","ns3"));
-        address.addChildElement(new QName("addressLine1","addressLine1","ns3")).setTextContent("13th Cross");
-        address.addChildElement(new QName("addressLine2","addressLine2","ns3")).setTextContent("Wilson Garden");
-        address.addChildElement(new QName("city","city","ns3")).setTextContent("Bangalore");
-        address.addChildElement(new QName("country","country","ns3")).setTextContent("IN");
+
+        SOAPElement address = payerIndividiualIdentity.addChildElement("address","ns3");
+        address.addChildElement("addressLine1","ns3").setTextContent("13th Cross");
+        address.addChildElement("addressLine2","ns3").setTextContent("Wilson Garden");
+        address.addChildElement("city","ns3").setTextContent("Bangalore");
+        address.addChildElement("country","ns3").setTextContent("IN");
         co.addChildElement(payerIdentity);
-        */
+
     }
 
     public SOAPMessage construct(){
