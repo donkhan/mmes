@@ -14,30 +14,28 @@ public class AddUser extends BaseSOAP{
         SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
         SOAPElement parameters = bodyElement.addChildElement(new QName("parameters"));
         SOAPElement co = parameters.addChildElement(new QName("http://customer.endpoint.earthport.com/api/merchant/v1/services/createOrUpdateUser",
-                "createOrUpdateUser","ns2"));
+                "createOrUpdateUser","ns1"));
         co.setAttribute("xmlns:ns","http://customer.endpoint.earthport.com/api/merchant/v2/components/core");
-        co.setAttribute("xmlns:ns3","http://customer.endpoint.earthport.com/api/merchant/v2/components/identityBase");
+        co.setAttribute("xmlns:ns2","http://customer.endpoint.earthport.com/api/merchant/v2/components/identityBase");
         co.setAttribute("version","1.0");
-        SOAPElement mui = co.addChildElement("merchantUserIdentity","ns2");
+        SOAPElement mui = co.addChildElement("merchantUserIdentity","ns1");
         mui.setTextContent("test_user343");
-        SOAPElement currency = co.addChildElement("accountCurrency","ns2");
+        SOAPElement currency = co.addChildElement("accountCurrency","ns1");
         currency.setTextContent("GBP");
 
+        SOAPElement payerIdentity = co.addChildElement("payerIdentity","ns1");
+        SOAPElement payerIndividiualIdentity = payerIdentity.addChildElement(
+                "payerIndividualIdentity","ns2");
+        SOAPElement name = payerIndividiualIdentity.addChildElement("name","ns2");
+        name.addChildElement("givenNames","ns2").setTextContent("Donald");
+        name.addChildElement("familyName","ns2").setTextContent("Trump");
 
-        SOAPElement payerIdentity = parameters.addChildElement(new QName("payerIdentity","payerIdentity","ns2"));
-        SOAPElement payerIndividiualIdentity = payerIdentity.addChildElement(new QName("payerIndividualIdentity",
-                "payerIndividualIdentity","ns3"));
-        SOAPElement name = payerIndividiualIdentity.addChildElement("name","ns3");
-        name.addChildElement("givenNames","ns3").setTextContent("Donald");
-        name.addChildElement("familyName","ns3").setTextContent("Trump");
 
-
-        SOAPElement address = payerIndividiualIdentity.addChildElement("address","ns3");
-        address.addChildElement("addressLine1","ns3").setTextContent("13th Cross");
-        address.addChildElement("addressLine2","ns3").setTextContent("Wilson Garden");
-        address.addChildElement("city","ns3").setTextContent("Bangalore");
-        address.addChildElement("country","ns3").setTextContent("IN");
-        co.addChildElement(payerIdentity);
+        SOAPElement address = payerIndividiualIdentity.addChildElement("address","ns2");
+        address.addChildElement("addressLine1","ns2").setTextContent("13th Cross");
+        address.addChildElement("addressLine2","ns2").setTextContent("Wilson Garden");
+        address.addChildElement("city","ns2").setTextContent("Bangalore");
+        address.addChildElement("country","ns2").setTextContent("IN");
 
     }
 
